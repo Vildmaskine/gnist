@@ -53,7 +53,7 @@
     resizeObserver = new ResizeObserver(() => fitAddon.fit());
     resizeObserver.observe(terminalEl);
 
-    term.writeln('\x1b[2mGnist serial terminal — ikke tilsluttet\x1b[0m');
+    term.writeln('\x1b[2mGnist serial terminal — not connected\x1b[0m');
 
     // Forward keystrokes to serial port
     term.onData((data) => {
@@ -71,7 +71,7 @@
     // Port disappeared / read error
     unlistenDisconnected = await listen('serial-disconnected', () => {
       connected = false;
-      term.writeln('\r\n\x1b[31mForbindelse mistet.\x1b[0m');
+      term.writeln('\r\n\x1b[31mConnection lost.\x1b[0m');
     });
   });
 
@@ -88,15 +88,15 @@
     if (connected) {
       await invoke('disconnect_port');
       connected = false;
-      term.writeln('\r\n\x1b[2mForbindelse lukket.\x1b[0m');
+      term.writeln('\r\n\x1b[2mDisconnected.\x1b[0m');
     } else {
       if (!selectedPort) return;
       try {
         await invoke('connect_port', { portName: selectedPort, baudRate: selectedBaud });
         connected = true;
-        term.writeln(`\r\n\x1b[32mTilsluttet ${selectedPort} @ ${selectedBaud} baud\x1b[0m`);
+        term.writeln(`\r\n\x1b[32mConnected to ${selectedPort} @ ${selectedBaud} baud\x1b[0m`);
       } catch (e) {
-        term.writeln(`\r\n\x1b[31mFejl: ${e}\x1b[0m`);
+        term.writeln(`\r\n\x1b[31mError: ${e}\x1b[0m`);
       }
     }
   }
@@ -114,7 +114,7 @@
     <div class="toolbar-group">
       <select bind:value={selectedPort} disabled={connected}>
         {#if ports.length === 0}
-          <option value="">Ingen porte</option>
+          <option value="">No ports</option>
         {:else}
           {#each ports as port}
             <option value={port}>{port}</option>

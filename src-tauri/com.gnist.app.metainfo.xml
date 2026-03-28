@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.gnist.app</id>
+
+  <name>Gnist</name>
+  <summary>Minimal serial terminal</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <description>
+    <p>
+      Gnist is a clean, modern serial terminal for communicating with
+      microcontrollers, embedded systems, and other serial devices.
+      It automatically detects connected ports and supports common baud rates.
+    </p>
+    <ul>
+      <li>Auto-detects USB and ACM serial ports</li>
+      <li>Configurable baud rate up to 115200</li>
+      <li>Full terminal emulation via xterm.js</li>
+      <li>Ports refreshed automatically when devices are plugged in or out</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">com.gnist.app.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Serial terminal connected to a device</caption>
+      <image>https://raw.githubusercontent.com/vildmaskine/gnist/main/static/screenshot.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/vildmaskine/gnist</url>
+  <url type="bugtracker">https://github.com/vildmaskine/gnist/issues</url>
+
+  <categories>
+    <category>Utility</category>
+    <category>Development</category>
+  </categories>
+
+  <keywords>
+    <keyword>serial</keyword>
+    <keyword>terminal</keyword>
+    <keyword>uart</keyword>
+    <keyword>usb</keyword>
+    <keyword>embedded</keyword>
+  </keywords>
+
+  <releases>
+    <release version="0.2.0" date="2026-03-28">
+      <description>
+        <p>English language, app icon, and Flatpak support.</p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-03-28">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+
+  <content_rating type="oars-1.1"/>
+</component>

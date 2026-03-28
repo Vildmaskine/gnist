@@ -89,7 +89,7 @@ fn write_port(state: tauri::State<SerialState>, data: Vec<u8>) -> Result<(), Str
     let mut lock = state.port.lock().unwrap();
     match lock.as_mut() {
         Some(port) => port.write_all(&data).map_err(|e| e.to_string()),
-        None => Err("Port ikke åben".to_string()),
+        None => Err("Port not open".to_string()),
     }
 }
 
