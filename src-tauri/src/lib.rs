@@ -98,6 +98,50 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(SerialState::default())
+        .setup(|_app| {
+            #[cfg(target_os = "linux")]
+            {
+                use gio::prelude::SettingsExt;
+
+                // Read the system button layout from GNOME settings
+                let layout = if let Some(source) = gio::SettingsSchemaSource::default() {
+                    if source.lookup("org.gnome.desktop.wm.preferences", true).is_some() {
+                        let wm = gio::Settings::new("org.gnome.desktop.wm.preferences");
+                        wm.string("button-layout").to_string()
+                    } else {
+                        "close,minimize,maximize:".to_string()
+                    }
+                } else {
+                    "close,minimize,maximize:".to_string()
+                };
+
+                // tao (Tauri's GTK backend) hardcodes the button layout on the HeaderBar
+                // widget for Wayland windows, overriding the system setting.
+                // We defer to the next GTK iteration so all windows are fully built,
+                // then find each HeaderBar and apply the correct layout.
+                glib::idle_add_once(move || {
+                    use gtk::prelude::*;
+                    for widget in gtk::Window::list_toplevels() {
+                        let win = match widget.downcast::<gtk::Window>() {
+                            Ok(w) => w,
+                            Err(_) => continue,
+                        };
+                        if let Some(titlebar) = win.titlebar() {
+                            // tao wraps HeaderBar in an EventBox on Wayland
+                            let header = if let Some(eb) = titlebar.downcast_ref::<gtk::EventBox>() {
+                                eb.children().into_iter().find_map(|c| c.downcast::<gtk::HeaderBar>().ok())
+                            } else {
+                                titlebar.downcast::<gtk::HeaderBar>().ok()
+                            };
+                            if let Some(h) = header {
+                                h.set_decoration_layout(Some(&layout));
+                            }
+                        }
+                    }
+                });
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             list_ports,
             connect_port,

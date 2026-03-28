@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { invoke } from '@tauri-apps/api/core';
+  import { getVersion } from '@tauri-apps/api/app';
   import { listen, type UnlistenFn } from '@tauri-apps/api/event';
   import { Terminal } from '@xterm/xterm';
   import { FitAddon } from '@xterm/addon-fit';
@@ -11,6 +12,7 @@
   let selectedPort = $state('');
   let selectedBaud = $state(115200);
   let connected = $state(false);
+  let version = $state('');
 
   let terminalEl: HTMLDivElement;
   let term: Terminal;
@@ -28,6 +30,7 @@
   }
 
   onMount(async () => {
+    version = await getVersion();
     refreshPorts();
     portPollInterval = setInterval(refreshPorts, 2000);
 
@@ -137,6 +140,8 @@
         {connected ? 'Disconnect' : 'Connect'}
       </button>
     </div>
+
+    <span class="version">v{version}</span>
   </header>
 
   <div class="terminal-wrap" bind:this={terminalEl}></div>

@@ -76,6 +76,13 @@ html, body {
   gap: 6px;
 }
 
+.version {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+}
+
 .toolbar select {
   height: 26px;
   padding: 0 24px 0 8px;
