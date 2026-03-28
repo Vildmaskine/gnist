@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Gnist
+Comment=Serial terminal
+Exec=gnist
+Icon=com.gnist.app
+Type=Application
+Categories=Utility;

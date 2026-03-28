@@ -1,0 +1,29 @@
+app-id: com.gnist.app
+
+# org.gnome.Platform bruges i stedet for org.freedesktop.Platform
+# fordi Tauri 2 kræver WebKitGTK 4.1 som kun er tilgængeligt i GNOME-runtimet
+runtime: org.gnome.Platform
+runtime-version: '48'
+sdk: org.gnome.Sdk
+command: gnist
+
+finish-args:
+  - --device=all          # Serial port adgang
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+
+modules:
+  - name: gnist
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 gnist                  /app/bin/gnist
+      - install -Dm644 com.gnist.app.desktop  /app/share/applications/com.gnist.app.desktop
+      - install -Dm644 icon.png               /app/share/icons/hicolor/512x512/apps/com.gnist.app.png
+    sources:
+      - type: file
+        path: target/release/gnist
+      - type: file
+        path: com.gnist.app.desktop
+      - type: file
+        path: icons/icon.png

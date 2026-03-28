@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm uninstall:*)",
+      "Bash(sudo apt-get:*)",
+      "Bash(npm run:*)",
+      "Bash(identify src-tauri/icons/icon.png)",
+      "Bash(cargo --version)",
+      "Bash(source \"$HOME/.cargo/env\")",
+      "Bash(flatpak-builder --force-clean --repo=repo build-dir gnist.flatpak.yml)",
+      "Bash(flatpak build-bundle:*)",
+      "Bash(flatpak install:*)",
+      "Bash(flatpak remotes:*)",
+      "Bash(flatpak list:*)",
+      "Bash(flatpak uninstall:*)"
+    ]
+  }
+}
