@@ -2,7 +2,7 @@
 
 A minimal, modern serial terminal built with Tauri 2, Svelte, and Rust.
 
-![Screenshot placeholder](docs/screenshot.png)
+![Screenshot placeholder](static/screenshot.png)
 
 ## Features
 
