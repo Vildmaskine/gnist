@@ -18,3 +18,5 @@ build/
 src-tauri/repo/
 src-tauri/icons/android/
 src-tauri/icons/ios/
+.claude/
+.vscode/
