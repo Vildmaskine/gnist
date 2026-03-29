@@ -26,8 +26,8 @@
 
   <screenshots>
     <screenshot type="default">
-      <caption>Serial terminal connected to a device</caption>
-      <image>https://raw.githubusercontent.com/vildmaskine/gnist/main/static/screenshot.png</image>
+      <caption>Gnist serial terminal</caption>
+      <image>https://raw.githubusercontent.com/Vildmaskine/gnist/main/static/screenshot.png</image>
     </screenshot>
   </screenshots>
 
@@ -48,6 +48,11 @@
   </keywords>
 
   <releases>
+    <release version="0.4.3" date="2026-03-30">
+      <description>
+        <p>Add developer info and screenshot to AppStream metadata.</p>
+      </description>
+    </release>
     <release version="0.4.2" date="2026-03-29">
       <description>
         <p>Fix window button placement in Flatpak by deferring to GTK portal settings.</p>
@@ -81,4 +86,8 @@
   </releases>
 
   <content_rating type="oars-1.1"/>
+
+  <developer id="io.github.vildmaskine">
+    <name>Vildmaskine</name>
+  </developer>
 </component>
