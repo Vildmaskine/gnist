@@ -1,6 +1,6 @@
 [package]
 name = "gnist"
-version = "0.4.1"
+version = "0.4.2"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -26,6 +26,5 @@ serialport = "4"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 gtk = { version = "0.18", features = [] }
-gio = { version = "0.18", features = [] }
 glib = { version = "0.18", features = [] }
 
