@@ -48,6 +48,11 @@
   </keywords>
 
   <releases>
+    <release version="0.5.0" date="2026-03-30">
+      <description>
+        <p>Add advanced serial settings: data bits, stop bits, parity, and flow control.</p>
+      </description>
+    </release>
     <release version="0.4.3" date="2026-03-30">
       <description>
         <p>Add developer info and screenshot to AppStream metadata.</p>

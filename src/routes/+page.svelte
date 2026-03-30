@@ -7,12 +7,29 @@
   import { FitAddon } from '@xterm/addon-fit';
 
   const BAUD_RATES = [9600, 19200, 38400, 57600, 115200];
+  const DATA_BITS  = [5, 6, 7, 8];
+  const STOP_BITS  = [{ label: '1', value: '1' }, { label: '2', value: '2' }];
+  const PARITIES   = [
+    { label: 'None', value: 'none' },
+    { label: 'Even', value: 'even' },
+    { label: 'Odd',  value: 'odd'  },
+  ];
+  const FLOW_CONTROLS = [
+    { label: 'None',              value: 'none'     },
+    { label: 'Hardware (RTS/CTS)', value: 'hardware' },
+    { label: 'Software (XON/XOFF)', value: 'software' },
+  ];
 
   let ports: string[] = $state([]);
-  let selectedPort = $state('');
-  let selectedBaud = $state(115200);
-  let connected = $state(false);
-  let version = $state('');
+  let selectedPort    = $state('');
+  let selectedBaud    = $state(115200);
+  let dataBits        = $state(8);
+  let stopBits        = $state('1');
+  let parity          = $state('none');
+  let flowControl     = $state('none');
+  let showAdvanced    = $state(false);
+  let connected       = $state(false);
+  let version         = $state('');
 
   let terminalEl: HTMLDivElement;
   let term: Terminal;
@@ -58,7 +75,6 @@
 
     term.writeln('\x1b[2mGnist serial terminal — not connected\x1b[0m');
 
-    // Forward keystrokes to serial port
     term.onData((data) => {
       if (connected) {
         const bytes = Array.from(new TextEncoder().encode(data));
@@ -66,12 +82,10 @@
       }
     });
 
-    // Incoming serial data → terminal
     unlistenData = await listen<number[]>('serial-data', (event) => {
       term.write(new Uint8Array(event.payload));
     });
 
-    // Port disappeared / read error
     unlistenDisconnected = await listen('serial-disconnected', () => {
       connected = false;
       term.writeln('\r\n\x1b[31mConnection lost.\x1b[0m');
@@ -95,7 +109,14 @@
     } else {
       if (!selectedPort) return;
       try {
-        await invoke('connect_port', { portName: selectedPort, baudRate: selectedBaud });
+        await invoke('connect_port', {
+          portName: selectedPort,
+          baudRate: selectedBaud,
+          dataBits,
+          stopBits,
+          parity,
+          flowControl,
+        });
         connected = true;
         term.writeln(`\r\n\x1b[32mConnected to ${selectedPort} @ ${selectedBaud} baud\x1b[0m`);
       } catch (e) {
@@ -132,6 +153,14 @@
       </select>
 
       <button
+        class="settings-btn"
+        class:active={showAdvanced}
+        onclick={() => showAdvanced = !showAdvanced}
+        disabled={connected}
+        title="Advanced settings"
+      >›</button>
+
+      <button
         class="connect-btn"
         class:connected
         onclick={toggleConnect}
@@ -143,6 +172,43 @@
 
     <span class="version">v{version}</span>
   </header>
+
+  {#if showAdvanced}
+    <div class="advanced-bar">
+      <label>
+        <span>Data bits</span>
+        <select bind:value={dataBits} disabled={connected}>
+          {#each DATA_BITS as b}
+            <option value={b}>{b}</option>
+          {/each}
+        </select>
+      </label>
+      <label>
+        <span>Stop bits</span>
+        <select bind:value={stopBits} disabled={connected}>
+          {#each STOP_BITS as s}
+            <option value={s.value}>{s.label}</option>
+          {/each}
+        </select>
+      </label>
+      <label>
+        <span>Parity</span>
+        <select bind:value={parity} disabled={connected}>
+          {#each PARITIES as p}
+            <option value={p.value}>{p.label}</option>
+          {/each}
+        </select>
+      </label>
+      <label>
+        <span>Flow control</span>
+        <select bind:value={flowControl} disabled={connected}>
+          {#each FLOW_CONTROLS as f}
+            <option value={f.value}>{f.label}</option>
+          {/each}
+        </select>
+      </label>
+    </div>
+  {/if}
 
   <div class="terminal-wrap" bind:this={terminalEl}></div>
 </div>

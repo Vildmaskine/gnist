@@ -111,6 +111,84 @@ html, body {
   cursor: not-allowed;
 }
 
+.settings-btn {
+  height: 26px;
+  width: 26px;
+  background: var(--color-input-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.settings-btn:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: #3e4450;
+}
+
+.settings-btn.active {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: rotate(90deg);
+}
+
+.settings-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Advanced settings bar */
+.advanced-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--color-toolbar-bg);
+  border-bottom: 1px solid var(--color-toolbar-border);
+  flex-shrink: 0;
+}
+
+.advanced-bar label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.advanced-bar label span {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.advanced-bar select {
+  height: 22px;
+  padding: 0 20px 0 6px;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius);
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23555b66' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+}
+
+.advanced-bar select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .connect-btn {
   height: 26px;
   padding: 0 14px;
