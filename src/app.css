@@ -76,8 +76,148 @@ html, body {
   gap: 6px;
 }
 
-.version {
+.toolbar-right {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn {
+  height: 26px;
+  width: 26px;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.icon-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-input-border);
+  background: var(--color-input-bg);
+}
+
+.icon-btn.active {
+  color: var(--color-accent);
+}
+
+.menu-wrap {
+  position: relative;
+}
+
+.menu-btn {
+  height: 26px;
+  width: 26px;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.menu-btn:hover,
+.menu-btn.active {
+  color: var(--color-text);
+  border-color: var(--color-input-border);
+  background: var(--color-input-bg);
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 160px;
+  background: var(--color-toolbar-bg);
+  border: 1px solid var(--color-toolbar-border);
+  border-radius: var(--radius);
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  background: transparent;
+  color: var(--color-text);
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.menu-item:hover {
+  background: var(--color-input-bg);
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--color-toolbar-border);
+  margin: 3px 0;
+}
+
+.menu-section {
+  padding: 5px 8px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.menu-section-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.menu-chips {
+  display: flex;
+  gap: 3px;
+}
+
+.menu-chip {
+  padding: 2px 7px;
+  background: var(--color-input-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-input-border);
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s, background 0.1s;
+}
+
+.menu-chip:hover {
+  color: var(--color-text);
+  border-color: #3e4450;
+}
+
+.menu-chip.active {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: #7C3AED18;
+}
+
+.menu-version {
+  padding: 5px 8px 3px;
+  border-top: 1px solid var(--color-toolbar-border);
   font-size: 11px;
   color: var(--color-text-muted);
   letter-spacing: 0.04em;
@@ -221,6 +361,7 @@ html, body {
   opacity: 0.35;
   cursor: not-allowed;
 }
+
 
 /* Terminal */
 .terminal-wrap {

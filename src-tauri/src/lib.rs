@@ -2,6 +2,7 @@ use std::io::{Read, Write};
 use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
+use serialport::{DataBits, FlowControl, Parity, StopBits};
 use tauri::{AppHandle, Emitter};
 
 struct SerialState {
@@ -39,12 +40,41 @@ fn connect_port(
     app: AppHandle,
     port_name: String,
     baud_rate: u32,
+    data_bits: u8,
+    stop_bits: String,
+    parity: String,
+    flow_control: String,
 ) -> Result<(), String> {
     // Stop existing read thread if any
     state.stop_flag.store(true, Ordering::Relaxed);
     *state.port.lock().unwrap() = None;
 
+    let db = match data_bits {
+        5 => DataBits::Five,
+        6 => DataBits::Six,
+        7 => DataBits::Seven,
+        _ => DataBits::Eight,
+    };
+    let sb = match stop_bits.as_str() {
+        "2" => StopBits::Two,
+        _   => StopBits::One,
+    };
+    let par = match parity.as_str() {
+        "even" => Parity::Even,
+        "odd"  => Parity::Odd,
+        _      => Parity::None,
+    };
+    let fc = match flow_control.as_str() {
+        "hardware" => FlowControl::Hardware,
+        "software" => FlowControl::Software,
+        _          => FlowControl::None,
+    };
+
     let port = serialport::new(&port_name, baud_rate)
+        .data_bits(db)
+        .stop_bits(sb)
+        .parity(par)
+        .flow_control(fc)
         .timeout(Duration::from_millis(10))
         .open()
         .map_err(|e| e.to_string())?;
@@ -93,6 +123,20 @@ fn write_port(state: tauri::State<SerialState>, data: Vec<u8>) -> Result<(), Str
     }
 }
 
+#[tauri::command]
+async fn save_log(content: String) -> Result<(), String> {
+    let file = rfd::AsyncFileDialog::new()
+        .set_file_name("gnist_log.txt")
+        .add_filter("Text", &["txt", "log"])
+        .save_file()
+        .await;
+
+    if let Some(handle) = file {
+        std::fs::write(handle.path(), content).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -129,6 +173,7 @@ pub fn run() {
             connect_port,
             disconnect_port,
             write_port,
+            save_log,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

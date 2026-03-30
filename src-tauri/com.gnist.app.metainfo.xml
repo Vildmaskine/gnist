@@ -48,6 +48,21 @@
   </keywords>
 
   <releases>
+    <release version="0.6.0" date="2026-03-30">
+      <description>
+        <p>Auto-scroll toggle button in toolbar. Configurable line ending (CR+LF, LF, CR) in menu.</p>
+      </description>
+    </release>
+    <release version="0.5.2" date="2026-03-30">
+      <description>
+        <p>Export terminal log to file via native save dialog.</p>
+      </description>
+    </release>
+    <release version="0.5.1" date="2026-03-30">
+      <description>
+        <p>Add clear button to toolbar. Fix advanced serial settings (data bits, stop bits, parity, flow control) being ignored on connect.</p>
+      </description>
+    </release>
     <release version="0.5.0" date="2026-03-30">
       <description>
         <p>Add advanced serial settings: data bits, stop bits, parity, and flow control.</p>

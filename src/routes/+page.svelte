@@ -19,6 +19,11 @@
     { label: 'Hardware (RTS/CTS)', value: 'hardware' },
     { label: 'Software (XON/XOFF)', value: 'software' },
   ];
+  const LINE_ENDINGS = [
+    { label: 'CR+LF', value: '\r\n' },
+    { label: 'LF',    value: '\n'   },
+    { label: 'CR',    value: '\r'   },
+  ];
 
   let ports: string[] = $state([]);
   let selectedPort    = $state('');
@@ -28,6 +33,9 @@
   let parity          = $state('none');
   let flowControl     = $state('none');
   let showAdvanced    = $state(false);
+  let showMenu        = $state(false);
+  let lineEnding      = $state('\r\n');
+  let autoScroll      = $state(true);
   let connected       = $state(false);
   let version         = $state('');
 
@@ -77,13 +85,15 @@
 
     term.onData((data) => {
       if (connected) {
-        const bytes = Array.from(new TextEncoder().encode(data));
+        const out = data.replace(/\r/g, lineEnding);
+        const bytes = Array.from(new TextEncoder().encode(out));
         invoke('write_port', { data: bytes });
       }
     });
 
     unlistenData = await listen<number[]>('serial-data', (event) => {
       term.write(new Uint8Array(event.payload));
+      if (autoScroll) term.scrollToBottom();
     });
 
     unlistenDisconnected = await listen('serial-disconnected', () => {
@@ -100,6 +110,28 @@
     if (connected) invoke('disconnect_port');
     term?.dispose();
   });
+
+  function clearTerminal() {
+    term.clear();
+    showMenu = false;
+  }
+
+  async function exportLog() {
+    showMenu = false;
+    const buf = term.buffer.active;
+    const lines: string[] = [];
+    for (let i = 0; i < buf.length; i++) {
+      const line = buf.getLine(i);
+      if (line) lines.push(line.translateToString(true));
+    }
+    const content = lines.join('\n').replace(/\n+$/, '\n');
+    await invoke('save_log', { content });
+  }
+
+  function handleMenuToggle(e: MouseEvent) {
+    e.stopPropagation();
+    showMenu = !showMenu;
+  }
 
   async function toggleConnect() {
     if (connected) {
@@ -125,6 +157,8 @@
     }
   }
 </script>
+
+<svelte:window onclick={() => { showMenu = false; }} />
 
 <div class="app">
   <header class="toolbar">
@@ -170,7 +204,66 @@
       </button>
     </div>
 
-    <span class="version">v{version}</span>
+    <div class="toolbar-right">
+      <button
+        class="icon-btn"
+        class:active={autoScroll}
+        onclick={() => autoScroll = !autoScroll}
+        title={autoScroll ? 'Auto-scroll on' : 'Auto-scroll off'}
+        aria-label="Toggle auto-scroll"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 3l-4 5h3v4h2V8h3L12 3zM12 21l4-5h-3v-4h-2v4H8l4 5z"/>
+        </svg>
+      </button>
+
+    <div class="menu-wrap">
+      <button
+        class="menu-btn"
+        class:active={showMenu}
+        onclick={handleMenuToggle}
+        title="More"
+        aria-label="More options"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="5"  cy="12" r="2"/>
+          <circle cx="12" cy="12" r="2"/>
+          <circle cx="19" cy="12" r="2"/>
+        </svg>
+      </button>
+
+      {#if showMenu}
+        <div class="menu-dropdown" onclick={(e) => e.stopPropagation()}>
+          <div class="menu-section">
+            <span class="menu-section-label">Line ending</span>
+            <div class="menu-chips">
+              {#each LINE_ENDINGS as le}
+                <button
+                  class="menu-chip"
+                  class:active={lineEnding === le.value}
+                  onclick={() => lineEnding = le.value}
+                >{le.label}</button>
+              {/each}
+            </div>
+          </div>
+          <div class="menu-divider"></div>
+          <button class="menu-item" onclick={exportLog}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            Export log
+          </button>
+          <button class="menu-item" onclick={clearTerminal}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+            </svg>
+            Clear terminal
+          </button>
+          <div class="menu-version">v{version}</div>
+        </div>
+      {/if}
+    </div>
+    </div>
   </header>
 
   {#if showAdvanced}
