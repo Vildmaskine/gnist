@@ -1,0 +1,3 @@
+# Gnist serial terminal — grant logged-in user access to USB serial devices
+SUBSYSTEMS=="usb", KERNEL=="ttyUSB[0-9]*", TAG+="uaccess", GROUP="dialout"
+SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", TAG+="uaccess", GROUP="dialout"

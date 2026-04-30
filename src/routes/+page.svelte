@@ -34,7 +34,7 @@
   let flowControl     = $state('none');
   let showAdvanced    = $state(false);
   let showMenu        = $state(false);
-  let lineEnding      = $state('\r\n');
+  let lineEnding      = $state('\r');
   let autoScroll      = $state(true);
   let connected       = $state(false);
   let version         = $state('');
@@ -82,6 +82,26 @@
     resizeObserver.observe(terminalEl);
 
     term.writeln('\x1b[2mGnist serial terminal — not connected\x1b[0m');
+
+    term.attachCustomKeyEventHandler((e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'C' && e.type === 'keydown') {
+        const sel = term.getSelection();
+        if (sel) navigator.clipboard.writeText(sel);
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && e.key === 'V' && e.type === 'keydown') {
+        navigator.clipboard.readText().then((text) => {
+          if (connected) {
+            const out = text.replace(/\r/g, lineEnding);
+            const bytes = Array.from(new TextEncoder().encode(out));
+            invoke('write_port', { data: bytes });
+          }
+          term.paste(text);
+        });
+        return false;
+      }
+      return true;
+    });
 
     term.onData((data) => {
       if (connected) {
@@ -153,6 +173,14 @@
         term.writeln(`\r\n\x1b[32mConnected to ${selectedPort} @ ${selectedBaud} baud\x1b[0m`);
       } catch (e) {
         term.writeln(`\r\n\x1b[31mError: ${e}\x1b[0m`);
+        const msg = String(e).toLowerCase();
+        if (msg.includes('permission') || msg.includes('access')) {
+          term.writeln('\x1b[33mHint: No permission to access the port.');
+          term.writeln('  deb/apt: the udev rule should be installed automatically.');
+          term.writeln('  AppImage: run once with sudo, or install the udev rule manually:');
+          term.writeln('    sudo cp /path/to/70-gnist-serial.rules /etc/udev/rules.d/');
+          term.writeln('    sudo udevadm control --reload-rules && sudo udevadm trigger\x1b[0m');
+        }
       }
     }
   }
